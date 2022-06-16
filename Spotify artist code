@@ -1,1 +1,41 @@
+#testing the spotify api
+#extracts the artist's name and displays their image
 
+import platform
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import webbrowser
+import os
+import time
+
+#obtains spotify client ID to extract data
+#User must have a developer's account on Spotify
+
+cid = input("Enter your Client ID: \n")
+secret = input("Enter secret client ID: \n")
+
+print("--- Verifying credentials ---")
+
+client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+time.sleep(2)
+
+print()
+
+artist_ID = input("Enter link to artist: \n")
+
+#slices string to obtain the artist URI
+URI = artist_ID.split("/")[-1].split("?")[0]
+
+artist = sp.artist(URI)
+
+#obrains image web address
+image = sp.artist(URI)["images"][0]["url"]
+
+print("This is: ", artist["name"])
+webbrowser.open(image)
+
+#commented out. this part is dependent on user's web browser the image is opened in
+#time.sleep(5)
+#os.system("taskkill /im msedge.exe /f")
