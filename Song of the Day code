@@ -1,0 +1,55 @@
+#program that will randomly select a song from a playlist that contains my most repeated songs
+#This is part of my song of the day that I have everyday on my instagram story
+#Makes use of the spotify API
+
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import random
+import os
+import webbrowser
+import time
+
+name = input("Enter your name: ")
+print("Welcome to ", name, "'s song of the day :)", sep='')
+
+#users of program must have developers account on spotify to access client IDs and Secret ID
+
+cid = input("Enter your Client ID: \n")
+secret = input("Enter secret client ID: \n")
+
+client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+#spotify playlist link
+
+playlist_link = input("Enter the link of the playlist you would like to get the song of the day from :) : \n")
+uri = playlist_link.split("/")[-1].split("?")[0]
+
+#an array of all the songs inside of the playlist
+songs_Details = sp.playlist_items(uri)["items"]
+
+#for loop iterates through the array of songs and creates an array of dictionaries of relevant song data
+songs = []
+
+for i in range(len(songs_Details)):
+    track = {"name": songs_Details[i]["track"]["name"], "artist": songs_Details[i]["track"]["album"]["artists"][0]["name"], "album_name": songs_Details[i]["track"]["album"]["name"], "release_date": songs_Details[i]["track"]["album"]["release_date"], "album_cover": songs_Details[i]["track"]["album"]["images"][0]["url"]}
+    songs.append(track)
+
+#generates a random number. this will be the index of the song of the Day
+print("--- Selecting the song of the Day ---")
+time.sleep(2)
+s = random.randint(0, len(songs))
+song_of_the_day = songs[s]
+print("--- TODAY'S SONG OF THE DAY ---")
+print("Title:", song_of_the_day["name"])
+print("Artist:", song_of_the_day["artist"])
+print("Album:", song_of_the_day["album_name"])
+print("Release Date:", song_of_the_day["release_date"])
+time.sleep(3)
+
+#album cover will be opened in the web browser
+webbrowser.open(song_of_the_day["album_cover"])
+
+
+
+
